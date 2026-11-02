@@ -41,6 +41,7 @@ const els = {
   emptyState: document.getElementById("emptyState"),
   count: document.getElementById("count"),
   exportBtn: document.getElementById("exportBtn"),
+  copyTimestampsBtn: document.getElementById("copyTimestampsBtn"),
   clearBtn: document.getElementById("clearBtn"),
   toast: document.getElementById("toast"),
   // settings controls
@@ -692,6 +693,17 @@ function buildMarkdown(record) {
     lines.push(record.url, "");
   }
 
+  lines.push(...timestampLines(record));
+  return lines.join("\n") + "\n";
+}
+
+// Just the timestamp bullets, without the frontmatter, title or URL line.
+function buildTimestampsMarkdown(record) {
+  return timestampLines(record).join("\n") + "\n";
+}
+
+function timestampLines(record) {
+  const lines = [];
   const sorted = [...record.entries].sort((a, b) => a.seconds - b.seconds);
   for (const entry of sorted) {
     const link = timestampUrl(record.url, entry.seconds);
@@ -708,7 +720,7 @@ function buildMarkdown(record) {
       : "";
     lines.push(`- [${label}](${link})${noteText}`);
   }
-  return lines.join("\n") + "\n";
+  return lines;
 }
 
 async function render() {
@@ -743,6 +755,7 @@ async function render() {
 
   const hasEntries = entries.length > 0;
   els.exportBtn.disabled = !hasEntries;
+  els.copyTimestampsBtn.disabled = !hasEntries;
   els.clearBtn.disabled = !hasEntries;
 
   const sorted = [...entries].sort((a, b) => a.seconds - b.seconds);
@@ -1055,7 +1068,9 @@ async function seekTo(seconds) {
   }
 }
 
-async function exportMarkdown() {
+// `build` is buildMarkdown for the full export or buildTimestampsMarkdown for
+// the timestamp bullets alone.
+async function exportMarkdown(build, doneMsg) {
   if (!state || !state.ok) return;
   const record = await getRecord(state.videoId);
   if (!record) {
@@ -1063,19 +1078,15 @@ async function exportMarkdown() {
     return;
   }
   if (record.entries.length === 0) return;
-  const md = buildMarkdown(withPageDetails(record));
+  const md = build(withPageDetails(record));
   try {
     await navigator.clipboard.writeText(md);
-    showToast("Markdown copied to clipboard");
+    showToast(doneMsg);
   } catch (e) {
     // The async clipboard API needs a focused document and can be refused
     // outright by policy. Fall back to a selection-based copy so the export
     // still works where it isn't available.
-    showToast(
-      copyViaTextarea(md)
-        ? "Markdown copied to clipboard"
-        : "Could not copy to clipboard"
-    );
+    showToast(copyViaTextarea(md) ? doneMsg : "Could not copy to clipboard");
   }
 }
 
@@ -1510,7 +1521,7 @@ function addCustomProp() {
   persistAndPreview();
 }
 
-// Live example of what "Export & copy" will produce with current settings.
+// Live example of what "Copy full note" will produce with current settings.
 async function updatePreview() {
   let record = null;
   let readFailed = false;
@@ -1560,7 +1571,18 @@ els.captureBtn.addEventListener("click", () => void openDraft());
 els.cancelDraftBtn.addEventListener("click", () => void closeDraft());
 els.saveBtn.addEventListener("click", () => void saveDraft());
 els.noteInput.addEventListener("input", schedulePersistDraft);
-els.exportBtn.addEventListener("click", () => void exportMarkdown());
+els.exportBtn.addEventListener(
+  "click",
+  () => void exportMarkdown(buildMarkdown, "Markdown copied to clipboard")
+);
+els.copyTimestampsBtn.addEventListener(
+  "click",
+  () =>
+    void exportMarkdown(
+      buildTimestampsMarkdown,
+      "Timestamps copied to clipboard"
+    )
+);
 els.clearBtn.addEventListener("click", () => void clearAll());
 
 els.reloadBtn.addEventListener("click", () => void reloadVideo());

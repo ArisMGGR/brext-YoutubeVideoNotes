@@ -17,8 +17,10 @@ many timestamped notes per video as you like, and export them all as Markdown.
   off next time you open it.
 - **Re-read the page** with ⟳ when YouTube's in-page navigation leaves the
   popup pointing at the wrong video.
-- **Export & copy Markdown** — one click copies the whole video's notes to your
-  clipboard in Markdown.
+- **Copy full note** — one click copies the whole video's notes to your
+  clipboard in Markdown, with the properties, title and link.
+- **Copy timestamps** — copies only the timestamp lines, with no properties,
+  title or link, for pasting into a note you already have.
 - **Delete** a single note with ✕, or clear the whole video with **Delete all** —
   which asks for a second press (the button turns orange and reads _CONFIRM
   DELETE_) before it removes anything, and disarms itself after a few seconds.
@@ -128,7 +130,8 @@ Opera GX and Chrome both load unpacked Manifest V3 extensions the same way:
    as `[MM:SS]`.
 4. Type your note and click **Save note** (or press `Ctrl`/`Cmd`+`Enter`).
 5. Repeat as many times as you want.
-6. Click **Export & copy Markdown** to copy all notes for the video.
+6. Click **Copy full note** to copy all notes for the video, or **Copy
+   timestamps** to copy just the timestamp lines.
 7. Use the **✕** on a note to remove it, or press **Delete all** twice to clear
    the video.
 
