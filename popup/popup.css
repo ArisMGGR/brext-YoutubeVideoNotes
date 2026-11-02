@@ -304,6 +304,11 @@ main {
   background: var(--bg);
 }
 
+.export-row {
+  display: flex;
+  gap: 8px;
+}
+
 .toast {
   position: fixed;
   left: 50%;

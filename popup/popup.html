@@ -82,9 +82,24 @@
     </main>
 
     <footer class="app-footer" id="mainFooter">
-      <button id="exportBtn" class="btn btn-secondary" disabled>
-        Export &amp; copy Markdown
-      </button>
+      <div class="export-row">
+        <button
+          id="exportBtn"
+          class="btn btn-secondary"
+          title="Copy the full note: properties, title, link and timestamps"
+          disabled
+        >
+          Copy full note
+        </button>
+        <button
+          id="copyTimestampsBtn"
+          class="btn btn-secondary"
+          title="Copy only the timestamp lines"
+          disabled
+        >
+          Copy timestamps
+        </button>
+      </div>
       <button id="clearBtn" class="btn btn-danger" disabled>Delete all</button>
     </footer>
 
